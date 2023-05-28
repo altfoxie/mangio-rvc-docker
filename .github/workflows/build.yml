@@ -26,7 +26,7 @@ jobs:
 
       - name: Update the latest commit in repository variables
         uses: action-pack/set-variable@v1
-        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         with:
           name: 'LATEST_MANGIO_COMMIT'
           value: ${{ env.MANGIO_COMMIT }}
@@ -34,19 +34,19 @@ jobs:
       
       - name: Login to ghcr registry
         uses: docker/login-action@v2
-        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         with:
           registry: ghcr.io
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.GH_ACCESS_TOKEN }}
       
       - name: Build image
-        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         run: |
           docker build -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }} -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest .
       
       - name: Push image
-        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         run: |
           docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }}
           docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest
