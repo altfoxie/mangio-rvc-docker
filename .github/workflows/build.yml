@@ -30,7 +30,7 @@ jobs:
         with:
           name: 'LATEST_MANGIO_COMMIT'
           value: ${{ env.MANGIO_COMMIT }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
       
       - name: Print hello world if the mangio commit is different
         if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
