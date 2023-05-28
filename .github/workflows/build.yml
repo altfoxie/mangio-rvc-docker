@@ -1,7 +1,7 @@
 on:
   push:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
   
 jobs:
@@ -43,11 +43,11 @@ jobs:
       - name: Build image
         if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         run: |
-          docker build -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }} -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest .
+          docker build -t ghcr.io/${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }} -t ghcr.io/${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest .
       
       - name: Push image
         if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT || github.event_name != 'schedule' }}
         run: |
-          docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }}
-          docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest
+          docker push ghcr.io/${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }}
+          docker push ghcr.io/${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest
         

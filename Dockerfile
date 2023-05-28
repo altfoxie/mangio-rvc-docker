@@ -6,6 +6,6 @@ RUN apt update && apt install -y curl && curl -s https://ngrok-agent.s3.amazonaw
 COPY ./mangio /workspace/mangio
 WORKDIR /workspace/mangio
 
-RUN pip install --upgrade pip && pip install -r requirements.txt && make install && make basev1 && make basev2
+RUN make install && make basev1 && make basev2
 
 WORKDIR /workspace
