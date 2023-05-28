@@ -20,11 +20,12 @@ jobs:
       
       - name: Check the latest commit
         run: |
-          # check the mangio commit
-          export $MANGIO_COMMIT=$(git -C mangio rev-parse HEAD)
+          export MANGIO_COMMIT=$(git -C mangio rev-parse HEAD)
           echo "Mangio commit: $MANGIO_COMMIT"
+          echo "MANGIO_COMMIT=$MANGIO_COMMIT" >> $GITHUB_ENV
 
       - name: Update the latest commit in repository variables
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
         uses: action-pack/set-variable@v1
         with:
           name: 'LATEST_MANGIO_COMMIT'
