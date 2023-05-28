@@ -21,7 +21,7 @@ jobs:
       - name: Check the latest commit
         run: |
           # check the mangio commit
-          $MANGIO_COMMIT=$(git -C mangio rev-parse HEAD)
+          export $MANGIO_COMMIT=$(git -C mangio rev-parse HEAD)
           echo "Mangio commit: $MANGIO_COMMIT"
 
       - name: Update the latest commit in repository variables
