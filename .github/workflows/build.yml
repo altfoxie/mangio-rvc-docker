@@ -25,14 +25,29 @@ jobs:
           echo "MANGIO_COMMIT=$MANGIO_COMMIT" >> $GITHUB_ENV
 
       - name: Update the latest commit in repository variables
-        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
         uses: action-pack/set-variable@v1
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
         with:
           name: 'LATEST_MANGIO_COMMIT'
           value: ${{ env.MANGIO_COMMIT }}
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
       
-      - name: Print hello world if the mangio commit is different
+      - name: Login to ghcr registry
+        uses: docker/login-action@v2
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.GH_ACCESS_TOKEN }}
+      
+      - name: Build image
         if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
         run: |
-          echo "Hello world"
+          docker build -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }} -t ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest .
+      
+      - name: Push image
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        run: |
+          docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:${{ env.MANGIO_COMMIT }}
+          docker push ghcr.io${{ secrets.GH_USERNAME }}/mangio-rvc-docker:latest
+        
