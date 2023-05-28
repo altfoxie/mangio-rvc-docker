@@ -1,0 +1,37 @@
+on:
+  push:
+  schedule:
+    - cron: '0 */12 * * *'
+  repository_dispatch:
+  
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Checkout Mangio repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'Mangio621/Mangio-RVC-Fork'
+          path: 'mangio'
+      
+      - name: Check the latest commit
+        run: |
+          # check the mangio commit
+          $MANGIO_COMMIT=$(git -C mangio rev-parse HEAD)
+          echo "Mangio commit: $MANGIO_COMMIT"
+
+      - name: Update the latest commit in repository variables
+        uses: action-pack/set-variable@v1
+        with:
+          name: 'LATEST_MANGIO_COMMIT'
+          value: ${{ env.MANGIO_COMMIT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Print hello world if the mangio commit is different
+        if: ${{ vars.LATEST_MANGIO_COMMIT != env.MANGIO_COMMIT }}
+        run: |
+          echo "Hello world"
